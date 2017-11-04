@@ -5,43 +5,42 @@
 __A type-safe HTTP client for Android and Java__  
 __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 라이브러리__
 
-### 1. Retrofit 이전
+## 1. Retrofit 이전
  
 > #### 토막지식  
 > UI쓰레드 (메인쓰레드) 에서는 네트워크 통신 작업을 할 수 없음  
 	  (NetworkOnMainThreadException 발생)  
 	  -> AsyncTask와 연계하여 새로운 쓰레드에서 진행해야함  
 
-1. 기본 내장 기능 
+### 1. 기본 내장 기능 
   - HttpClient 			(Apache)
   - HttpURLConnection 	(Java)
+
+    위의 두 기술 중 하나를 활용하여 AsyncTask 연계!
+      
+    한계  
+      1. 코드가 복잡  
+      2. 사용하기에 어려운 측면이 있음  
+      3. HttpClient의 경우 더 이상 새로운 버전을 제공하지 않음 (2016년 기점)
+
+    example Code : [http://mommoo.tistory.com/5](http://mommoo.tistory.com/5)
+
+### 2. Volley 라이브러리
+
+    위의 1번을 개선한 라이브러리이며, __RequestQueue__ 를 활용하여 요청을 관리
   
-  위의 두 기술 중 하나를 활용하여 AsyncTask 연계!
-
-  한계  
-    1. 코드가 복잡  
-    2. 사용하기에 어려운 측면이 있음  
-    3. HttpClient의 경우 더 이상 새로운 버전을 제공하지 않음 (2016년 기점)
-
-  example Code : [http://mommoo.tistory.com/5](http://mommoo.tistory.com/5)
-
-2. Volley 라이브러리
-
-  위의 1번을 개선한 라이브러리이며, __RequestQueue__ 를 활용하여 요청을 관리
-  
-  한계  
-    1. 1번보다는 속도가 개선되었으나, 여전히 약간 느린 처리 속도
+    한계
+      1. 1번보다는 속도가 개선되었으나, 여전히 약간 느린 처리 속도
   
 
-3. Retrofit
+### 3. Retrofit
 
   위의 1번을 개선하여 Square 사에서 만든 OkHttp 기반 라이브러리  
   
-> OkHttp  
-> 서버 연동 관련 기능만 있는 Square 사 라이브러리
-
-  Retrofit는
+  > OkHttp  
+  > 서버 연동 관련 기능만 있는 Square 사 라이브러리  
   
+  Retrofit 는? 
   - 어노테이션을 통한 가독성 증가
   - 서버 연동을 위한 기능 선택 가능 (HttpClient, OkHttp 등)
   - response 메시지에 대해 파싱방식 설정 가능 (GSON, XML 등)
@@ -51,7 +50,7 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
 
 ---------------------------- 이렇게 된 이상 Retrofit 으로 간다. ----------------------------
 
-### 1. Retrofit 구성
+## 2. Retrofit 구성
 
 1. Service Interface 객체
 	각 URI에 매핑된 Call 객체 저장소  
