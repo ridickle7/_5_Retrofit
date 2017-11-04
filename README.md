@@ -88,31 +88,34 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
 	});</code></pre>
 
 4. 기타
-Retrofit 객체 설정 시 header 및 클라이언트 설정, parser 설정이 가능합니다.  
-<pre><code>retrofit = new Retrofit.Builder()
-                    .baseUrl(baseURL)
-                    .client(getRequestHeader())
-                    .addConverterFactory(GsonConverterFactory.create()) // GSON Parser 추가
-                    .build();
-
-service = retrofit.create(NetworkInterface.class);  // 인터페이스 연결</code></pre>
-> GSON
->   JSON 파싱을 쉽고 간단하게 할 수 있도록 도와주는 외부 라이브러리
-> 기존 JSON은 
+	Retrofit 객체 설정 시 header 및 클라이언트 설정, parser 설정이 가능합니다.  
+	<pre><code>retrofit = new Retrofit.Builder()
+		.baseUrl(baseURL)
+		.client(getRequestHeader())
+		.addConverterFactory(GsonConverterFactory.create()) // GSON Parser 추가
+		.build();
+	
+	service = retrofit.create(NetworkInterface.class);  // 인터페이스 연결</code></pre>  
+	
+> #### GSON  
+>   JSON 파싱을 쉽고 간단하게 할 수 있도록 도와주는 외부 라이브러리  
+> ###### 기존 JSON은
 >   1. JSONException 에 대해 일일히 try/catch 문을 적용시켜주어야 한다.
->   2. 중간 DAO 객체 내에 값을 넣어주는 과정을 거쳐야 한다.
+>   2. 중간 DAO 객체 내에 값을 넣어주는 과정을 거쳐야 한다.  
+> 
+> ##### 하지만!! GSON을 아래와 같이 활용함으로써!! (아래 작업으로 GSON 라이브러리가 바로 적용 됨)
 > <pre><code>// Retrofit 객체 Code 에서 발췌
 > 
 > // ....
 > .addConverterFactory(GsonConverterFactory.create()) //Json Parser 추가
 > // ....</code></pre>
-> 이 작업으로 GSON 라이브러리가 바로 적용이 되고 
+>  
+> ##### 아래의 과정을 없애줄 수 있다.
 > <pre><code>// Call 객체 Code 에서 발췌
 > 
 > // response json 파싱하는 가정 필요
 > // ...
 > </code></pre>
-> 이 과정이 필요 없어진다.
 
 참고
 - Retrofit 의 우수성 : http://iw90.tistory.com/123
