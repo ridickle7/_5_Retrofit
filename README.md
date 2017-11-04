@@ -96,28 +96,133 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
 		.build();
 	
 	service = retrofit.create(NetworkInterface.class);  // 인터페이스 연결</code></pre>  
-	
-> #### GSON  
->   JSON 파싱을 쉽고 간단하게 할 수 있도록 도와주는 외부 라이브러리  
-> ###### 기존 JSON은
->   1. JSONException 에 대해 일일히 try/catch 문을 적용시켜주어야 한다.
->   2. 중간 DAO 객체 내에 값을 넣어주는 과정을 거쳐야 한다.  
-> 
-> ##### 하지만!! GSON을 아래와 같이 활용함으로써!! (아래 작업으로 GSON 라이브러리가 바로 적용 됨)
-> <pre><code>// Retrofit 객체 Code 에서 발췌
-> 
-> // ....
-> .addConverterFactory(GsonConverterFactory.create()) //Json Parser 추가
-> // ....</code></pre>
->  
-> ##### 아래의 과정을 없애줄 수 있다.
-> <pre><code>// Call 객체 Code 에서 발췌
-> 
-> // response json 파싱하는 가정 필요
-> // ...
-> </code></pre>
+	> #### GSON  
+	>   JSON 파싱을 쉽고 간단하게 할 수 있도록 도와주는 외부 라이브러리  
+	> ###### 기존 JSON은
+	>   1. JSONException 에 대해 일일히 try/catch 문을 적용시켜주어야 한다.
+	>   2. 중간 DAO 객체 내에 값을 넣어주는 과정을 거쳐야 한다.  
+	> 
+	> ##### 하지만!! GSON을 아래와 같이 활용함으로써!! (아래 작업으로 GSON 라이브러리가 바로 적용 됨)
+	> <pre><code>// Retrofit 객체 Code 에서 발췌
+	> 
+	> // ....
+	> .addConverterFactory(GsonConverterFactory.create()) //Json Parser 추가
+	> // ....</code></pre>
+	>  
+	> ##### 아래의 과정을 없애줄 수 있다.
+	> <pre><code>// Call 객체 Code 에서 발췌
+	> 
+	> // response json 파싱하는 가정 필요
+	> // ...
+	> </code></pre>
 
+## 3. Retrofit 활용
+
+### 1. app.gradle의 dependency에 두 줄을 추가한다.
+<pre><code>dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    // ...
+    
+    // retrofit
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+}</code></pre>
+
+### 2. 매니페스트에 INTERNET 퍼미션 추가
+<pre><code> <uses-permission android:name="android.permission.INTERNET" /> </code></pre>
+
+### 3. GSON 활용으로 얻어낼 JSON 데이터 클래스를 만듬
+주의 사항  
+해당 데이터 클래스의 형식이, 가져올 JSON 데이터 형식과 매치되어야 한다.  
+즉, __변수(이름)!!!!!!!!__ 을 맞춰줘야 한다.
+
+
+<pre><code>public class Network_User {
+    String id;
+    String passowrd;
+
+    public String getId() { return id; }
+
+    public String getPassowrd() {
+        return passowrd;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setPassowrd(String passowrd) {
+        this.passowrd = passowrd;
+    }
+}</code></pre>
+
+
+### 4. Service Interface 객체 생성 및 활성화
+
+<pre><code>// ....
+// Retrofit 객체 생성
+retrofit = new Retrofit.Builder()
+	.baseUrl(baseURL)
+	.client(getRequestHeader())
+	.addConverterFactory(GsonConverterFactory.create()) // GSON Parser 추가
+	.build();
+	
+// interface 활성화
+service = retrofit.create(NetworkInterface.class);  // 인터페이스 연결
+
+//...
+
+// 로그 출력 기능을 retrofit에 추가하기
+private static OkHttpClient getRequestHeader() {
+	HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+	interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+	OkHttpClient client = new OkHttpClient.Builder()
+		.addInterceptor(interceptor).build();
+		
+	return client;
+}</code></pre>
+
+### 5. Call 을 통해 서버와 통신
+<pre><code>Call<Network_Authorize> get_userLogin = service.get_userLogin("id", "pw");
+	post_userLogin.enqueue(new Callback<Network_User>() {
+		@Override
+		public void onResponse(Call<Network_User> call, Response<Network_User> response) {
+			// 
+		}
+	
+		@Override
+		public void onFailure(Call<Network_Authorize> call, Throwable t) {
+			// 
+		}
+	});</code></pre>
+	
+## 3. 여담
+
+### 1. URI는 동적으로 치환이 가능하게 작성할 수 있다.
+<pre><code>// example
+// 영문/숫자로 이루어진 문자열을 '{' 와 '}' 로 감싸 정의합니다.
+// 매치되는 인수는 '@Path' 로 정의합니다.
+@GET("/group/{id}/users")
+Call<List<User>> groupList(@Path("id") int groupId);
+</code></pre>
+
+> 파리미터 어노테이션 종류  
+> @QueryMap : 쿼리를 맵 형태로 보냄 	(ex> @QueryMap Map<String, String> options)  
+> @Body : Body 형태로 request를 보냄 (ex> Call<User> createUser(@Body User user); )  
+> @Field : FormUrlEncoded 형식으로 보낼 시 설정 
+> <pre><code> // example
+> @FormUrlEncoded
+> @POST("/user/edit")
+> Call<User> updateUser(@Field("first_name") String first, @Field("last_name") String last);</code></pre>
+>  @Part : MultiPart 방식으로 보낼 시 선택
+> <pre><code> // example
+> @Multipart
+> @PUT("/user/photo")
+> Call<User> updateUser(@Part("photo") RequestBody photo, @Part("description") RequestBody description);</code></pre>
+	
 참고
 - Retrofit 의 우수성 : http://iw90.tistory.com/123
 - OkHttp 와 Retrofit2 : https://tacademy.sktechx.com/front/community/mentoring/viewMentoring.action?seq=1163
 - URL / URI : https://blog.lael.be/post/61
+- 전체적인 설명 및 가이드라인 : http://flymogi.tistory.com/entry/Retrofit%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%B4%EB%B3%B4%EC%9E%90-v202
