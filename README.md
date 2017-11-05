@@ -26,27 +26,21 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
     example Code : [http://mommoo.tistory.com/5](http://mommoo.tistory.com/5)
   
 ### 2. Volley 라이브러리
-
-  위의 1번을 개선한 라이브러리이며, __RequestQueue__ 를 활용하여 요청을 관리
-  
-  한계  
-    1. 1번보다는 속도가 개선되었으나, 여전히 약간 느린 처리 속도
-  
+  - 위의 1번을 개선한 라이브러리이며, __RequestQueue__ 를 활용하여 요청을 관리
+  - 1번보다는 속도가 개선되었으나, 여전히 약간 느린 처리 속도
 
 ### 3. Retrofit
-
-  위의 1번을 개선하여 Square 사에서 만든 OkHttp 기반 라이브러리  
-  
+  - 위의 1번을 개선하여 Square 사에서 만든 OkHttp 기반 라이브러리  
   > OkHttp  
   > 서버 연동 관련 기능만 있는 Square 사 라이브러리  
-  
+
   Retrofit 는? 
   - 어노테이션을 통한 가독성 증가 (@GET, @POST)  
   - 서버 연동을 위한 기능 선택 가능 (HttpClient, OkHttp 등)  
   - response 메시지에 대해 파싱방식 설정 가능 (GSON, XML 등)  
   - RXJava 지원  
   - 속도가 타 라이브러리와 기능과 비교하여 제일 빠르다 (아래 사진 참고)  
-    ![Image](http://cfile30.uf.tistory.com/image/2261D04D56BF3EA7169034)
+  ![Image](http://cfile30.uf.tistory.com/image/2261D04D56BF3EA7169034)
 
 -------------------------------- 이렇게 된 이상 Retrofit 으로 간다. --------------------------------
 
@@ -66,14 +60,16 @@ dependencies {
 
 ### 2. 매니페스트에 INTERNET 퍼미션 추가
 <pre><code>// manifest.xml
- <uses-permission android:name="android.permission.INTERNET" /></code></pre>
+< uses-permission android:name="android.permission.INTERNET" />
+</code></pre>
 
 ### 3. GSON 활용으로 얻어낼 JSON 데이터 클래스를 만듬
 주의 사항  
 해당 데이터 클래스의 형식이, 가져올 JSON 데이터 형식과 매치되어야 한다.  
 즉, __변수(이름)!!!!!!!!__ 을 맞춰줘야 한다.
 
-<pre><code>public class Network_User {
+<pre><code> // User.java
+public class User {
     String id;
     String passowrd;
 
@@ -94,13 +90,14 @@ dependencies {
 
 
 ### 4. Service Interface 객체 생성 및 활성화
-<pre><code>public interface NetworkService {
-@GET("/users/login")
-	Call<Network_User> get_userLogin(@Query("id") String id, @Query("password") String password);
+<pre><code>// NetworkService.java
+public interface NetworkService {
+	@GET("/users/login")
+	Call< User> get_userLogin(@Query("id") String id, @Query("password") String password);
 }</code></pre>
 
 ### 5. Retrofit과 Service 객체 연결
-<pre><code>// ....
+<pre><code>// NetworkPresenter.java
 // Retrofit 객체 생성
 retrofit = new Retrofit.Builder()
 	.baseUrl(baseURL)
@@ -124,29 +121,30 @@ private static OkHttpClient getRequestHeader() {
 }</code></pre>
 
 ### 6. Call 을 통해 서버와 통신
-<pre><code>Call<Network_Authorize> get_userLogin = service.get_userLogin("id", "pw");
-	post_userLogin.enqueue(new Callback<Network_User>() {
-		@Override
-		public void onResponse(Call<Network_User> call, Response<Network_User> response) {
-			// 
-		}
-	
-		@Override
-		public void onFailure(Call<Network_Authorize> call, Throwable t) {
-			// 
-		}
-	});</code></pre>  
+<pre><code>// MainActivity.java
+Call< User> get_userLogin = service.get_userLogin("id", "pw");
+post_userLogin.enqueue(new Callback< User>() {
+	@Override
+	public void onResponse(Call< User> call, Response< User> response) {
+		// 
+	}
 
+	@Override
+	public void onFailure(Call< User> call, Throwable t) {
+		// 
+	}
+});</code></pre>  
 
 ## 3. Retrofit 구성
 
 1. Service Interface 객체  
 	각 URI에 매핑된 Call 객체 저장소  
 	어노테이션을 활용하며, 각 매핑된 이벤트는 모두 Call 객체를 통해 만들고 활용하는 것이 가능  
-	<pre><code>public interface NetworkService {
+	<pre><code>// NetworkService.java
+	public interface NetworkService {
 		@GET("/users/login")
-		Call<Network_User> get_userLogin(@Query("id") String id, @Query("password") String password);
-		}</code></pre>
+		public Call< User> get_userLogin(@Query("id") String id, @Query("password") String password);
+	}</code></pre>
 
 2. Retrofit 객체  
 	retrofit 객체를 통해 앞서 만든 Call 객체 저장소를 활성화  
@@ -159,10 +157,11 @@ private static OkHttpClient getRequestHeader() {
 	
 3. Call 객체  
 	각각의 Call 객체는 Service Interface 객체를 통해 HTTP 요청을 원격 웹서버로 보낼 수 있습니다.
-	<pre><code>Call<Network_Authorize> get_userLogin = service.get_userLogin("id", "pw");
-	post_userLogin.enqueue(new Callback<Network_User>() {
+	<pre><code>// MainActivity.java
+	Call< User> get_userLogin = service.get_userLogin("id", "pw");
+	post_userLogin.enqueue(new Callback< User>() {
 		@Override
-		public void onResponse(Call<Network_User> call, Response<Network_User> response) {
+		public void onResponse(Call< User> call, Response< User> response) {
 			// response json 파싱하는 과정 필요
 			// ...
 			Log.d("Login getId : ", response.body().getId());
@@ -170,14 +169,15 @@ private static OkHttpClient getRequestHeader() {
 		}
 	
 		@Override
-		public void onFailure(Call<Network_Authorize> call, Throwable t) {
+		public void onFailure(Call< User> call, Throwable t) {
 			Toast.makeText(getApplicationContext(), "실패 : " + t, Toast.LENGTH_SHORT).show();
 		}
 	});</code></pre>
 
 4. 기타  
 	Retrofit 객체 설정 시 header 및 클라이언트 설정, parser 설정이 가능합니다.  
-	<pre><code>retrofit = new Retrofit.Builder()
+	<pre><code>// NetworkPresenter.java
+	retrofit = new Retrofit.Builder()
 		.baseUrl(baseURL)
 		.client(getRequestHeader())
 		.addConverterFactory(GsonConverterFactory.create()) // GSON Parser 추가
@@ -212,22 +212,22 @@ private static OkHttpClient getRequestHeader() {
 // 영문/숫자로 이루어진 문자열을 '{' 와 '}' 로 감싸 정의합니다.
 // 매치되는 인수는 '@Path' 로 정의합니다.
 @GET("/group/{id}/users")
-Call<List<User>> groupList(@Path("id") int groupId);
+Call< List< User>> groupList(@Path("id") int groupId);
 </code></pre>
 
 > 파리미터 어노테이션 종류  
 > @QueryMap : 쿼리를 맵 형태로 보냄 	(ex> @QueryMap Map<String, String> options)  
-> @Body : Body 형태로 request를 보냄 (ex> Call<User> createUser(@Body User user); )  
+> @Body : Body 형태로 request를 보냄 (ex> Call< User> createUser(@Body User user); )  
 > @Field : FormUrlEncoded 형식으로 보낼 시 설정 
 > <pre><code> // example
 > @FormUrlEncoded
 > @POST("/user/edit")
-> Call<User> updateUser(@Field("first_name") String first, @Field("last_name") String last);</code></pre>
+> Call< User> updateUser(@Field("first_name") String first, @Field("last_name") String last);</code></pre>
 >  @Part : MultiPart 방식으로 보낼 시 선택
 > <pre><code> // example
 > @Multipart
 > @PUT("/user/photo")
-> Call<User> updateUser(@Part("photo") RequestBody photo, @Part("description") RequestBody description);</code></pre>
+> Call< User> updateUser(@Part("photo") RequestBody photo, @Part("description") RequestBody description);</code></pre>
 	
 참고
 - Retrofit 의 우수성 : http://iw90.tistory.com/123
