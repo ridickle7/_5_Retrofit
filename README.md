@@ -11,7 +11,7 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
 > UI쓰레드 (메인쓰레드) 에서는 네트워크 통신 작업을 할 수 없음  
 	  (NetworkOnMainThreadException 발생)  
 	  -> AsyncTask와 연계하여 새로운 쓰레드에서 진행해야함  
-
+  
 ### 1. 기본 내장 기능 
   - HttpClient 			(Apache)
   - HttpURLConnection 	(Java)
@@ -24,13 +24,13 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
       3. HttpClient의 경우 더 이상 새로운 버전을 제공하지 않음 (2016년 기점)
 
     example Code : [http://mommoo.tistory.com/5](http://mommoo.tistory.com/5)
-
+  
 ### 2. Volley 라이브러리
 
-    위의 1번을 개선한 라이브러리이며, __RequestQueue__ 를 활용하여 요청을 관리
+  위의 1번을 개선한 라이브러리이며, __RequestQueue__ 를 활용하여 요청을 관리
   
-    한계
-      1. 1번보다는 속도가 개선되었으나, 여전히 약간 느린 처리 속도
+  한계  
+    1. 1번보다는 속도가 개선되었으나, 여전히 약간 느린 처리 속도
   
 
 ### 3. Retrofit
@@ -41,19 +41,20 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
   > 서버 연동 관련 기능만 있는 Square 사 라이브러리  
   
   Retrofit 는? 
-  - 어노테이션을 통한 가독성 증가
-  - 서버 연동을 위한 기능 선택 가능 (HttpClient, OkHttp 등)
-  - response 메시지에 대해 파싱방식 설정 가능 (GSON, XML 등)
-  - RXJava 지원
-  - 속도가 타 라이브러리와 기능과 비교하여 제일 빠르다 (아래 사진 참고)
+  - 어노테이션을 통한 가독성 증가 (@GET, @POST)  
+  - 서버 연동을 위한 기능 선택 가능 (HttpClient, OkHttp 등)  
+  - response 메시지에 대해 파싱방식 설정 가능 (GSON, XML 등)  
+  - RXJava 지원  
+  - 속도가 타 라이브러리와 기능과 비교하여 제일 빠르다 (아래 사진 참고)  
     ![Image](http://cfile30.uf.tistory.com/image/2261D04D56BF3EA7169034)
 
----------------------------- 이렇게 된 이상 Retrofit 으로 간다. ----------------------------
+-------------------------------- 이렇게 된 이상 Retrofit 으로 간다. --------------------------------
 
 ## 2. Retrofit 가이드라인 
 
 ### 1. app.gradle의 dependency에 두 줄을 추가한다.
-<pre><code>dependencies {
+<pre><code>// app.gradle
+dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     // ...
@@ -64,13 +65,13 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
 }</code></pre>
 
 ### 2. 매니페스트에 INTERNET 퍼미션 추가
-<pre><code> <uses-permission android:name="android.permission.INTERNET" /> </code></pre>
+<pre><code>// manifest.xml
+ <uses-permission android:name="android.permission.INTERNET" /></code></pre>
 
 ### 3. GSON 활용으로 얻어낼 JSON 데이터 클래스를 만듬
 주의 사항  
 해당 데이터 클래스의 형식이, 가져올 JSON 데이터 형식과 매치되어야 한다.  
 즉, __변수(이름)!!!!!!!!__ 을 맞춰줘야 한다.
-
 
 <pre><code>public class Network_User {
     String id;
