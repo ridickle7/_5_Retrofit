@@ -31,16 +31,16 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
 
 ### 3. Retrofit
   - 위의 1번을 개선하여 Square 사에서 만든 OkHttp 기반 라이브러리  
-  > OkHttp  
-  > 서버 연동 관련 기능만 있는 Square 사 라이브러리  
+    > OkHttp  
+    > 서버 연동 관련 기능만 있는 Square 사 라이브러리  
 
-  Retrofit 는? 
-  - 어노테이션을 통한 가독성 증가 (@GET, @POST)  
-  - 서버 연동을 위한 기능 선택 가능 (HttpClient, OkHttp 등)  
-  - response 메시지에 대해 파싱방식 설정 가능 (GSON, XML 등)  
-  - RXJava 지원  
-  - 속도가 타 라이브러리와 기능과 비교하여 제일 빠르다 (아래 사진 참고)  
-  ![Image](http://cfile30.uf.tistory.com/image/2261D04D56BF3EA7169034)
+    Retrofit 는? 
+    - 어노테이션을 통한 가독성 증가 (@GET, @POST)  
+    - 서버 연동을 위한 기능 선택 가능 (HttpClient, OkHttp 등)  
+    - response 메시지에 대해 파싱방식 설정 가능 (GSON, XML 등)  
+    - RXJava 지원  
+    - 속도가 타 라이브러리와 기능과 비교하여 제일 빠르다 (아래 사진 참고)  
+    ![Image](http://cfile30.uf.tistory.com/image/2261D04D56BF3EA7169034)
 
 -------------------------------- 이렇게 된 이상 Retrofit 으로 간다. --------------------------------
 
@@ -137,74 +137,73 @@ post_userLogin.enqueue(new Callback< User>() {
 
 ## 3. Retrofit 구성
 
-1. Service Interface 객체  
-	각 URI에 매핑된 Call 객체 저장소  
-	어노테이션을 활용하며, 각 매핑된 이벤트는 모두 Call 객체를 통해 만들고 활용하는 것이 가능  
-	<pre><code>// NetworkService.java
-	public interface NetworkService {
-		@GET("/users/login")
-		public Call< User> get_userLogin(@Query("id") String id, @Query("password") String password);
-	}</code></pre>
+### 1. Service Interface 객체  
+각 URI에 매핑된 Call 객체 저장소  
+어노테이션을 활용하며, 각 매핑된 이벤트는 모두 Call 객체를 통해 만들고 활용하는 것이 가능  
+<pre><code>// NetworkService.java
+public interface NetworkService {
+	@GET("/users/login")
+	public Call< User> get_userLogin(@Query("id") String id, @Query("password") String password);
+}</code></pre>
 
-2. Retrofit 객체  
-	retrofit 객체를 통해 앞서 만든 Call 객체 저장소를 활성화  
-	(이를 진행 안할 시 Interface 객체는 그냥 저장소가 될 뿐...)
-	<pre><code>Retrofit retrofit = new Retrofit.Builder()
+### 2. Retrofit 객체  
+retrofit 객체를 통해 앞서 만든 Call 객체 저장소를 활성화  
+(이를 진행 안할 시 Interface 객체는 그냥 저장소가 될 뿐...)
+<pre><code>// NetworkPresenter.java
+Retrofit retrofit = new Retrofit.Builder()
 	.baseUrl("https://api.github.com")
 	.build();
 	
-	NetworkService service = retrofit.create(NetworkService.class);</code></pre>
-	
-3. Call 객체  
-	각각의 Call 객체는 Service Interface 객체를 통해 HTTP 요청을 원격 웹서버로 보낼 수 있습니다.
-	<pre><code>// MainActivity.java
-	Call< User> get_userLogin = service.get_userLogin("id", "pw");
-	post_userLogin.enqueue(new Callback< User>() {
-		@Override
-		public void onResponse(Call< User> call, Response< User> response) {
-			// response json 파싱하는 과정 필요
-			// ...
-			Log.d("Login getId : ", response.body().getId());
-			Toast.makeText(getApplicationContext(), "비밀번호는 " + response.body().getPassowrd(), Toast.LENGTH_SHORT).show();
-		}
-	
-		@Override
-		public void onFailure(Call< User> call, Throwable t) {
-			Toast.makeText(getApplicationContext(), "실패 : " + t, Toast.LENGTH_SHORT).show();
-		}
-	});</code></pre>
+NetworkService service = retrofit.create(NetworkService.class);</code></pre>
 
-4. 기타  
-	Retrofit 객체 설정 시 header 및 클라이언트 설정, parser 설정이 가능합니다.  
-	<pre><code>// NetworkPresenter.java
-	retrofit = new Retrofit.Builder()
-		.baseUrl(baseURL)
-		.client(getRequestHeader())
-		.addConverterFactory(GsonConverterFactory.create()) // GSON Parser 추가
-		.build();
-	
-	service = retrofit.create(NetworkInterface.class);  // 인터페이스 연결</code></pre>  
-	> #### GSON  
-	>   JSON 파싱을 쉽고 간단하게 할 수 있도록 도와주는 외부 라이브러리  
-	> ###### 기존 JSON은
-	>   1. JSONException 에 대해 일일히 try/catch 문을 적용시켜주어야 한다.
-	>   2. 중간 DAO 객체 내에 값을 넣어주는 과정을 거쳐야 한다.  
-	> 
-	> ##### 하지만!! GSON을 아래와 같이 활용함으로써!! (아래 작업으로 GSON 라이브러리가 바로 적용 됨)
-	> <pre><code>// Retrofit 객체 Code 에서 발췌
-	> 
-	> // ....
-	> .addConverterFactory(GsonConverterFactory.create()) //Json Parser 추가
-	> // ....</code></pre>
-	>  
-	> ##### 아래의 과정을 없애줄 수 있다.
-	> <pre><code>// Call 객체 Code 에서 발췌
-	> 
-	> // response json 파싱하는 가정 필요
-	> // ...
-	> </code></pre>
+Retrofit 객체 설정 시 header 및 클라이언트 설정, parser 설정이 가능합니다.  
+<pre><code>// NetworkPresenter.java
+retrofit = new Retrofit.Builder()
+	.baseUrl(baseURL)
+	.client(getRequestHeader())
+	.addConverterFactory(GsonConverterFactory.create()) // GSON Parser 추가
+	.build();
 
+service = retrofit.create(NetworkInterface.class);  // 인터페이스 연결</code></pre>  
+> #### GSON  
+>   JSON 파싱을 쉽고 간단하게 할 수 있도록 도와주는 외부 라이브러리  
+> ###### 기존 JSON은
+>   1. JSONException 에 대해 일일히 try/catch 문을 적용시켜주어야 한다.
+>   2. 중간 DAO 객체 내에 값을 넣어주는 과정을 거쳐야 한다.  
+> 
+> ##### 하지만!! GSON을 아래와 같이 활용함으로써!! (아래 작업으로 GSON 라이브러리가 바로 적용 됨)
+> <pre><code>// Retrofit 객체 Code 에서 발췌
+> 
+> // ....
+> .addConverterFactory(GsonConverterFactory.create()) //Json Parser 추가
+> // ....</code></pre>
+>  
+> ##### 아래의 과정을 없애줄 수 있다.
+> <pre><code>// Call 객체 Code 에서 발췌
+> 
+> // response json 파싱하는 가정 필요
+> // ...
+> </code></pre>
 	
+### 3. Call 객체  
+각각의 Call 객체는 Service Interface 객체를 통해 HTTP 요청을 원격 웹서버로 보낼 수 있습니다.
+<pre><code>// MainActivity.java
+Call< User> get_userLogin = service.get_userLogin("id", "pw");
+post_userLogin.enqueue(new Callback< User>() {
+	@Override
+	public void onResponse(Call< User> call, Response< User> response) {
+		// GSON을 활용하지 않는 경우 response json 파싱하는 과정 필요
+		Log.d("Login getId : ", response.body().getId());
+		Toast.makeText(getApplicationContext(), "비밀번호는 " + response.body().getPassowrd(), Toast.LENGTH_SHORT).show();
+	}
+	
+	@Override
+	public void onFailure(Call< User> call, Throwable t) {
+		Toast.makeText(getApplicationContext(), "실패 : " + t, Toast.LENGTH_SHORT).show();
+	}
+});</code></pre>
+
+
 ## 4. 여담
 
 ### 1. URI는 동적으로 치환이 가능하게 작성할 수 있다.
