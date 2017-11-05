@@ -50,73 +50,7 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
 
 ---------------------------- 이렇게 된 이상 Retrofit 으로 간다. ----------------------------
 
-## 2. Retrofit 구성
-
-1. Service Interface 객체  
-	각 URI에 매핑된 Call 객체 저장소  
-	어노테이션을 활용하며, 각 매핑된 이벤트는 모두 Call 객체를 통해 만들고 활용하는 것이 가능  
-	<pre><code>public interface NetworkService {
-		@GET("/users/login")
-		Call<Network_User> get_userLogin(@Query("id") String id, @Query("password") String password);
-		}</code></pre>
-
-2. Retrofit 객체  
-	retrofit 객체를 통해 앞서 만든 Call 객체 저장소를 활성화  
-	(이를 진행 안할 시 Interface 객체는 그냥 저장소가 될 뿐...)
-	<pre><code>Retrofit retrofit = new Retrofit.Builder()
-	.baseUrl("https://api.github.com")
-	.build();
-	
-	NetworkService service = retrofit.create(NetworkService.class);</code></pre>
-	
-3. Call 객체  
-	각각의 Call 객체는 Service Interface 객체를 통해 HTTP 요청을 원격 웹서버로 보낼 수 있습니다.
-	<pre><code>Call<Network_Authorize> get_userLogin = service.get_userLogin("id", "pw");
-	post_userLogin.enqueue(new Callback<Network_User>() {
-		@Override
-		public void onResponse(Call<Network_User> call, Response<Network_User> response) {
-			// response json 파싱하는 과정 필요
-			// ...
-			Log.d("Login getId : ", response.body().getId());
-			Toast.makeText(getApplicationContext(), "비밀번호는 " + response.body().getPassowrd(), Toast.LENGTH_SHORT).show();
-		}
-	
-		@Override
-		public void onFailure(Call<Network_Authorize> call, Throwable t) {
-			Toast.makeText(getApplicationContext(), "실패 : " + t, Toast.LENGTH_SHORT).show();
-		}
-	});</code></pre>
-
-4. 기타  
-	Retrofit 객체 설정 시 header 및 클라이언트 설정, parser 설정이 가능합니다.  
-	<pre><code>retrofit = new Retrofit.Builder()
-		.baseUrl(baseURL)
-		.client(getRequestHeader())
-		.addConverterFactory(GsonConverterFactory.create()) // GSON Parser 추가
-		.build();
-	
-	service = retrofit.create(NetworkInterface.class);  // 인터페이스 연결</code></pre>  
-	> #### GSON  
-	>   JSON 파싱을 쉽고 간단하게 할 수 있도록 도와주는 외부 라이브러리  
-	> ###### 기존 JSON은
-	>   1. JSONException 에 대해 일일히 try/catch 문을 적용시켜주어야 한다.
-	>   2. 중간 DAO 객체 내에 값을 넣어주는 과정을 거쳐야 한다.  
-	> 
-	> ##### 하지만!! GSON을 아래와 같이 활용함으로써!! (아래 작업으로 GSON 라이브러리가 바로 적용 됨)
-	> <pre><code>// Retrofit 객체 Code 에서 발췌
-	> 
-	> // ....
-	> .addConverterFactory(GsonConverterFactory.create()) //Json Parser 추가
-	> // ....</code></pre>
-	>  
-	> ##### 아래의 과정을 없애줄 수 있다.
-	> <pre><code>// Call 객체 Code 에서 발췌
-	> 
-	> // response json 파싱하는 가정 필요
-	> // ...
-	> </code></pre>
-
-## 3. Retrofit 활용
+## 2. Retrofit 가이드라인 
 
 ### 1. app.gradle의 dependency에 두 줄을 추가한다.
 <pre><code>dependencies {
@@ -188,7 +122,7 @@ private static OkHttpClient getRequestHeader() {
 	return client;
 }</code></pre>
 
-### 5. Call 을 통해 서버와 통신
+### 6. Call 을 통해 서버와 통신
 <pre><code>Call<Network_Authorize> get_userLogin = service.get_userLogin("id", "pw");
 	post_userLogin.enqueue(new Callback<Network_User>() {
 		@Override
@@ -200,9 +134,77 @@ private static OkHttpClient getRequestHeader() {
 		public void onFailure(Call<Network_Authorize> call, Throwable t) {
 			// 
 		}
-	});</code></pre>
+	});</code></pre>  
+
+
+## 3. Retrofit 구성
+
+1. Service Interface 객체  
+	각 URI에 매핑된 Call 객체 저장소  
+	어노테이션을 활용하며, 각 매핑된 이벤트는 모두 Call 객체를 통해 만들고 활용하는 것이 가능  
+	<pre><code>public interface NetworkService {
+		@GET("/users/login")
+		Call<Network_User> get_userLogin(@Query("id") String id, @Query("password") String password);
+		}</code></pre>
+
+2. Retrofit 객체  
+	retrofit 객체를 통해 앞서 만든 Call 객체 저장소를 활성화  
+	(이를 진행 안할 시 Interface 객체는 그냥 저장소가 될 뿐...)
+	<pre><code>Retrofit retrofit = new Retrofit.Builder()
+	.baseUrl("https://api.github.com")
+	.build();
 	
-## 3. 여담
+	NetworkService service = retrofit.create(NetworkService.class);</code></pre>
+	
+3. Call 객체  
+	각각의 Call 객체는 Service Interface 객체를 통해 HTTP 요청을 원격 웹서버로 보낼 수 있습니다.
+	<pre><code>Call<Network_Authorize> get_userLogin = service.get_userLogin("id", "pw");
+	post_userLogin.enqueue(new Callback<Network_User>() {
+		@Override
+		public void onResponse(Call<Network_User> call, Response<Network_User> response) {
+			// response json 파싱하는 과정 필요
+			// ...
+			Log.d("Login getId : ", response.body().getId());
+			Toast.makeText(getApplicationContext(), "비밀번호는 " + response.body().getPassowrd(), Toast.LENGTH_SHORT).show();
+		}
+	
+		@Override
+		public void onFailure(Call<Network_Authorize> call, Throwable t) {
+			Toast.makeText(getApplicationContext(), "실패 : " + t, Toast.LENGTH_SHORT).show();
+		}
+	});</code></pre>
+
+4. 기타  
+	Retrofit 객체 설정 시 header 및 클라이언트 설정, parser 설정이 가능합니다.  
+	<pre><code>retrofit = new Retrofit.Builder()
+		.baseUrl(baseURL)
+		.client(getRequestHeader())
+		.addConverterFactory(GsonConverterFactory.create()) // GSON Parser 추가
+		.build();
+	
+	service = retrofit.create(NetworkInterface.class);  // 인터페이스 연결</code></pre>  
+	> #### GSON  
+	>   JSON 파싱을 쉽고 간단하게 할 수 있도록 도와주는 외부 라이브러리  
+	> ###### 기존 JSON은
+	>   1. JSONException 에 대해 일일히 try/catch 문을 적용시켜주어야 한다.
+	>   2. 중간 DAO 객체 내에 값을 넣어주는 과정을 거쳐야 한다.  
+	> 
+	> ##### 하지만!! GSON을 아래와 같이 활용함으로써!! (아래 작업으로 GSON 라이브러리가 바로 적용 됨)
+	> <pre><code>// Retrofit 객체 Code 에서 발췌
+	> 
+	> // ....
+	> .addConverterFactory(GsonConverterFactory.create()) //Json Parser 추가
+	> // ....</code></pre>
+	>  
+	> ##### 아래의 과정을 없애줄 수 있다.
+	> <pre><code>// Call 객체 Code 에서 발췌
+	> 
+	> // response json 파싱하는 가정 필요
+	> // ...
+	> </code></pre>
+
+	
+## 4. 여담
 
 ### 1. URI는 동적으로 치환이 가능하게 작성할 수 있다.
 <pre><code>// example
@@ -230,4 +232,5 @@ Call<List<User>> groupList(@Path("id") int groupId);
 - Retrofit 의 우수성 : http://iw90.tistory.com/123
 - OkHttp 와 Retrofit2 : https://tacademy.sktechx.com/front/community/mentoring/viewMentoring.action?seq=1163
 - URL / URI : https://blog.lael.be/post/61
+- GSON 설명 : http://newy.tistory.com/entry/post-2
 - 전체적인 설명 및 가이드라인 : http://flymogi.tistory.com/entry/Retrofit%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%B4%EB%B3%B4%EC%9E%90-v202
