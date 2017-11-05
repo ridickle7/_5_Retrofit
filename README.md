@@ -159,7 +159,12 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
 
 
 ### 4. Service Interface 객체 생성 및 활성화
+<pre><code>public interface NetworkService {
+@GET("/users/login")
+	Call<Network_User> get_userLogin(@Query("id") String id, @Query("password") String password);
+}</code></pre>
 
+### 5. Retrofit과 Service 객체 연결
 <pre><code>// ....
 // Retrofit 객체 생성
 retrofit = new Retrofit.Builder()
