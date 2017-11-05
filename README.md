@@ -52,15 +52,15 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
 
 ## 2. Retrofit 구성
 
-1. Service Interface 객체
+1. Service Interface 객체  
 	각 URI에 매핑된 Call 객체 저장소  
-	어노테이션을 활용하며, 각 매핑된 이벤트는 모두 Call 객체를 통해 만들고 활용하는 것이 가능
+	어노테이션을 활용하며, 각 매핑된 이벤트는 모두 Call 객체를 통해 만들고 활용하는 것이 가능  
 	<pre><code>public interface NetworkService {
 		@GET("/users/login")
 		Call<Network_User> get_userLogin(@Query("id") String id, @Query("password") String password);
 		}</code></pre>
 
-2. Retrofit 객체
+2. Retrofit 객체  
 	retrofit 객체를 통해 앞서 만든 Call 객체 저장소를 활성화  
 	(이를 진행 안할 시 Interface 객체는 그냥 저장소가 될 뿐...)
 	<pre><code>Retrofit retrofit = new Retrofit.Builder()
@@ -69,7 +69,7 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
 	
 	NetworkService service = retrofit.create(NetworkService.class);</code></pre>
 	
-3. Call 객체
+3. Call 객체  
 	각각의 Call 객체는 Service Interface 객체를 통해 HTTP 요청을 원격 웹서버로 보낼 수 있습니다.
 	<pre><code>Call<Network_Authorize> get_userLogin = service.get_userLogin("id", "pw");
 	post_userLogin.enqueue(new Callback<Network_User>() {
@@ -87,7 +87,7 @@ __HTTP API를 자바 인터페이스 형태로 사용할 수 있는 HTTP 통신 
 		}
 	});</code></pre>
 
-4. 기타
+4. 기타  
 	Retrofit 객체 설정 시 header 및 클라이언트 설정, parser 설정이 가능합니다.  
 	<pre><code>retrofit = new Retrofit.Builder()
 		.baseUrl(baseURL)
