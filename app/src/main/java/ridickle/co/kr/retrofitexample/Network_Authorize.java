@@ -8,9 +8,7 @@ public class Network_Authorize {
     String id;
     String passowrd;
 
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
 
     public String getPassowrd() {
         return passowrd;
@@ -20,7 +18,7 @@ public class Network_Authorize {
         this.id = id;
     }
 
-    public void setScope(String passowrd) {
+    public void setPassowrd(String passowrd) {
         this.passowrd = passowrd;
     }
 }
