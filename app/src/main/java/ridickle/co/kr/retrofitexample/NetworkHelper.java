@@ -14,15 +14,15 @@ import retrofit2.Retrofit;
 
 public class NetworkHelper {
 
-    public NetworkHelper networkHelper;
-    public Retrofit retrofit;
-    public NetworkInterface service;
-    public String baseURL = "http://211.249.50.198:8080";
+    public static NetworkHelper networkHelper;
+    public static Retrofit retrofit;
+    public static NetworkInterface service;
+    public static String baseURL = "http://52.79.87.95:3001";
 
     private NetworkHelper() {
     }
 
-    public NetworkInterface getInstance() {
+    public static NetworkInterface getInstance() {
         if (networkHelper == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(baseURL)
