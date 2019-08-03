@@ -1,9 +1,9 @@
-package ridickle.co.kr.retrofitexample;
+package ridickle.co.kr.retrofitexample.java;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by ridickle on 2017. 10. 7..

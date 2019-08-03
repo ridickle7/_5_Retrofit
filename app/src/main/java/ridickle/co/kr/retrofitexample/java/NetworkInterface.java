@@ -1,4 +1,4 @@
-package ridickle.co.kr.retrofitexample;
+package ridickle.co.kr.retrofitexample.java;
 
 import retrofit2.Call;
 import retrofit2.http.Field;

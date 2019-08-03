@@ -1,4 +1,4 @@
-package ridickle.co.kr.retrofitexample;
+package ridickle.co.kr.retrofitexample.java;
 
 /**
  * Created by ridickle on 2016. 12. 5..
