@@ -71,20 +71,20 @@ dependencies {
 <pre><code> // User.java
 public class User {
     String id;
-    String passowrd;
+    String password;
 
     public String getId() { return id; }
 
     public String getPassowrd() {
-        return passowrd;
+        return password;
     }
 
     public void setId(String id) {
         this.id = id;
     }
 
-    public void setPassowrd(String passowrd) {
-        this.passowrd = passowrd;
+    public void setPassowrd(String password) {
+        this.password = password;
     }
 }</code></pre>
 

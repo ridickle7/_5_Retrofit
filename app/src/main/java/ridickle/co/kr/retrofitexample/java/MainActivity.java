@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import retrofit2.Call;
@@ -18,6 +19,7 @@ import ridickle.co.kr.retrofitexample.R;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button get, post;
+    EditText et_id, et_password;
     NetworkInterface nInterface;
 
     @Override
@@ -29,6 +31,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         get = (Button) findViewById(R.id.get);
         post = (Button) findViewById(R.id.post);
+
+        et_id = (EditText) findViewById(R.id.et_id);
+        et_password = (EditText) findViewById(R.id.et_password);
 
         get.setOnClickListener(this);
         post.setOnClickListener(this);
@@ -63,14 +68,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.get:
                 nInterface = NetworkHelper.getInstance();
                 Call<Network_Authorize> get_userLogin = nInterface.get_userLogin(
-                        "code",                                 // id
-                        "login");                               // password
+                        et_id.getText().toString(),         // id
+                        et_password.getText().toString());  // password
 
                 get_userLogin.clone().enqueue(new Callback<Network_Authorize>() {
                     @Override
                     public void onResponse(Call<Network_Authorize> call, Response<Network_Authorize> response) {
                         Log.d("Login getId : ", response.body().getId());
-                        Toast.makeText(getApplicationContext(), "비밀번호는 " + response.body().getPassowrd(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "비밀번호는 " + response.body().getPassword(), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -84,14 +89,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.post:
                 nInterface = NetworkHelper.getInstance();
                 Call<Network_Authorize> post_userLogin = nInterface.post_userLogin(
-                        "code",                                 // id
-                        "login");                               // password
+                        et_id.getText().toString(),         // id
+                        et_password.getText().toString());  // password
 
                 post_userLogin.clone().enqueue(new Callback<Network_Authorize>() {
                     @Override
                     public void onResponse(Call<Network_Authorize> call, Response<Network_Authorize> response) {
                         Log.d("Login getId : ", response.body().getId());
-                        Toast.makeText(getApplicationContext(), "비밀번호는 " + response.body().getPassowrd(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "비밀번호는 " + response.body().getPassword(), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override

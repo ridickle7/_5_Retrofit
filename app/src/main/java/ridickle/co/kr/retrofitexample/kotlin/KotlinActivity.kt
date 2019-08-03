@@ -52,8 +52,8 @@ class KotlinActivity : AppCompatActivity(), View.OnClickListener {
             R.id.tv_get -> {
                 nInterface = NetworkUtil.getInstance()
                 val get_userLogin = nInterface?.get_userLogin(
-                        "code",             // id
-                        "login")      // password
+                        et_id.text.toString(),             // id
+                        et_password.text.toString())      // password
 
                 get_userLogin?.enqueue(object : Callback<NetworkModel> {
                     override fun onResponse(call: Call<NetworkModel>, response: Response<NetworkModel>) {
@@ -71,8 +71,8 @@ class KotlinActivity : AppCompatActivity(), View.OnClickListener {
             R.id.tv_post -> {
                 nInterface = NetworkUtil.getInstance()
                 val post_userLogin = nInterface?.post_userLogin(
-                        "code",         // id
-                        "login")  // password
+                        et_id.text.toString(),         // id
+                        et_password.text.toString())  // password
 
                 post_userLogin?.enqueue(object : Callback<NetworkModel> {
                     override fun onResponse(call: Call<NetworkModel>, response: Response<NetworkModel>) {
