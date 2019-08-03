@@ -30,7 +30,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         get = (Button) findViewById(R.id.get);
         post = (Button) findViewById(R.id.post);
 
-
+        get.setOnClickListener(this);
+        post.setOnClickListener(this);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
 
             case R.id.get:
                 nInterface = NetworkHelper.getInstance();

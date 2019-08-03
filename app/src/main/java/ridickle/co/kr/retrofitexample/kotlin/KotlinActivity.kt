@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import kotlinx.android.synthetic.main.content_kotlin.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,6 +23,9 @@ class KotlinActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_kotlin)
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
+
+        tv_get.setOnClickListener(this)
+        tv_post.setOnClickListener(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -45,7 +49,7 @@ class KotlinActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.get -> {
+            R.id.tv_get -> {
                 nInterface = NetworkUtil.getInstance()
                 val get_userLogin = nInterface?.get_userLogin(
                         "code",             // id
@@ -54,7 +58,7 @@ class KotlinActivity : AppCompatActivity(), View.OnClickListener {
                 get_userLogin?.enqueue(object : Callback<NetworkModel> {
                     override fun onResponse(call: Call<NetworkModel>, response: Response<NetworkModel>) {
                         Log.d("Login getId : ", response.body()!!.id)
-                        Toast.makeText(applicationContext, "비밀번호는 " + response.body()!!.passowrd, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "비밀번호는 " + response.body()!!.password, Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onFailure(call: Call<NetworkModel>, t: Throwable) {
@@ -64,7 +68,7 @@ class KotlinActivity : AppCompatActivity(), View.OnClickListener {
             }
 
 
-            R.id.post -> {
+            R.id.tv_post -> {
                 nInterface = NetworkUtil.getInstance()
                 val post_userLogin = nInterface?.post_userLogin(
                         "code",         // id
@@ -73,7 +77,7 @@ class KotlinActivity : AppCompatActivity(), View.OnClickListener {
                 post_userLogin?.enqueue(object : Callback<NetworkModel> {
                     override fun onResponse(call: Call<NetworkModel>, response: Response<NetworkModel>) {
                         Log.d("Login getId : ", response.body()!!.id)
-                        Toast.makeText(applicationContext, "비밀번호는 " + response.body()!!.passowrd, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "비밀번호는 " + response.body()!!.password, Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onFailure(call: Call<NetworkModel>, t: Throwable) {

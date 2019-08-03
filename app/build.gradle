@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'// 코틀린 플러그인을 적용합�
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "buv.co.kr"
+        applicationId "ridickle.co.kr.retrofitexample"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 4

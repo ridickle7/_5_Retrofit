@@ -6,5 +6,5 @@ package ridickle.co.kr.retrofitexample.kotlin
 
 data class NetworkModel(
         var id: String,
-        var passowrd: String
+        var password: String
 )
